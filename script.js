@@ -16,6 +16,15 @@ cvs.height = canvasH;
 const container = document.getElementById("container");
 container.style.width = canvasW + 'px';
 
+// スコアの初期化
+let score = 0;
+
+// スコア表示を更新する関数
+function updateScore() {
+    const scoreElement = document.getElementById("score");
+    scoreElement.textContent = `Score: ${score}`;
+}
+
 //描画処理
 const draw=()=>{
   //塗りに黒を設定
@@ -26,4 +35,5 @@ const draw=()=>{
 //初期化処理
 const init=()=>{
   draw();
+  updateScore();
 }
