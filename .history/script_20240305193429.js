@@ -219,3 +219,4 @@ class Tetris {
         }
         draw(); 
     };
+}

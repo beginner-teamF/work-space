@@ -192,7 +192,6 @@ class Tetris {
     }
 }
 
-    //落下したテトリミノをボード配列に書き込む
     writeToBoard(tet);
       //動きが止まったtetをボード座標に書き写す
         const fixTet = () => {
@@ -219,3 +218,4 @@ class Tetris {
         }
         draw(); 
     };
+}

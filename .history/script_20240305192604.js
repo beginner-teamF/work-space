@@ -192,30 +192,29 @@ class Tetris {
     }
 }
 
-    //落下したテトリミノをボード配列に書き込む
-    writeToBoard(tet);
+    writeToBoard
       //動きが止まったtetをボード座標に書き写す
-        const fixTet = () => {
+      const fixTet = () => {
         for (let y = 0; y < tetSize; y++) {
-            for (let x = 0; x < tetSize; x++) {
+          for (let x = 0; x < tetSize; x++) {
             if (tet[y][x]) {
               //ボードに書き込む
-                board[offsetY + y][offsetX + x] = 1;
+              board[offsetY + y][offsetX + x] = 1;
             }
+          }
         }
-        }
-    };
+      };
       //繰り返し行われる落下処理
-        const dropTet = () => {
+      const dropTet = () => {
         //下に行けたら
         if (canMove(0, 1)) {
           //下に行く
-            offsetY++;
+          offsetY++;
         } else {
           //行けなかったら固定する
-        fixTet();
+          fixTet();
           //初期位置に戻す
-        initStartPos();
+          initStartPos();
         }
-        draw(); 
-    };
+        draw();
+      };
