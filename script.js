@@ -6,11 +6,11 @@ class TetrisBlock {
     constructor() {
         this.num = Math.floor(Math.random() * 7);
         this.block = this.createBlock();
+        this.color = this.createColor();
     }
 
     createBlock() {
         const tetTypes = [
-            [], //最初の要素を空としておく
             [
               [0, 0, 0, 0],
               [0, 1, 1, 0],
@@ -59,7 +59,17 @@ class TetrisBlock {
         return tetType;
     }
     createColor() {
-
+        const tetColors = [
+            '#f6fe85',
+            '#07e0e7',
+            '#7ced77',
+            '#f78ff0',
+            '#f94246',
+            '#9693fe',
+            '#f2b907',
+        ];
+        const tetColor = tetColors[this.num];
+        return tetColor;
     }
 }
 
@@ -81,7 +91,9 @@ class Tetris {
         this.tetSize = 4; // テトリスブロックの一辺の大きさ
 
         // テトリスブロックを描画。本来はランダム生成する。
-        this.tet = new TetrisBlock().block;
+        const tetrisBlock = new TetrisBlock();
+        this.tet = tetrisBlock.block;
+        this.color = tetrisBlock.color;
 
         //位置を調整するためのオフセット
         this.offsetX = 0;
@@ -167,7 +179,7 @@ class Tetris {
     // ブロック一つを表示する関数
     drawBlock(x, y) {
         // ブロックの色を指定
-        this.ctx.fillStyle = '#f00';
+        this.ctx.fillStyle = this.color;
         let px = x * this.blockSize;
         let py = y * this.blockSize;
         this.ctx.fillRect(px, py, this.blockSize, this.blockSize);
