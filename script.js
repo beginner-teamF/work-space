@@ -14,6 +14,8 @@ class Tetris {
         this.boardRow = 20;
         this.boardCol = 10;
         this.blockSize = 30;
+        this.speed = 300; // ブロックが落ちるスピード
+        this.timerId = NaN; // タイマーのID
 
         // テトリスブロックのサイズ
         this.tetSize = 4; // テトリスブロックの一辺の大きさ
@@ -35,8 +37,8 @@ class Tetris {
         // 初期化処理
         this.createBoard(this.board);
         this.updateScore();
-        // this.createTetrisBlock();
         this.move();
+        this.timerId = setInterval(this.dropTet.bind(this), this.speed);
     }
 
     // ボードの作成
@@ -61,7 +63,16 @@ class Tetris {
                 this.board[y][x] = 0;
             }
         }
-        this.board[3][5] = 1; //テスト用
+
+        // テトリスブロックの初期位置
+        const initStartPos = () => {
+            this.offsetX = this.boardCol / 2 - this.tetSize / 2
+            this.offsetY = 0
+        }
+
+        initStartPos();
+        // this.timerId = setInterval(this.dropTet, this.speed);
+
         this.draw();
     }
 
@@ -107,7 +118,6 @@ class Tetris {
         this.ctx.strokeRect(px, py, this.blockSize, this.blockSize);
     };
 
-
     // ボタンを押した時の処理
     move() {
         document.addEventListener('keydown', (e) => {
@@ -135,6 +145,14 @@ class Tetris {
             }
             this.draw();
         });
+    }
+
+    dropTet() {
+        if(this.canMoveCheck(this.tet, 0, 1)) {
+            this.offsetY++;
+        } else {
+        }
+        this.draw();
     }
 
     // 指定された方向に移動できるかを判断する(x, yは移動量)
