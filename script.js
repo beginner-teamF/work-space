@@ -1,31 +1,29 @@
 
 
-// テトリスボードの作成
-function createTetrisBoard(board) {
-    //ボードサイズ
-    const blockSize = 30;
-    const boardRow = 20;
-    const boardCol = 10;
-    //キャンバスの取得
-    const cvs = document.getElementById("cvs");
-    const ctx=cvs.getContext("2d");
-    //2dコンテキストを取得
-    //キャンバスサイズ
-    const canvasW = blockSize * boardCol;
-    const canvasH = blockSize * boardRow;
-    cvs.width = canvasW;
-    cvs.height = canvasH;
-    //コンテナの設定
-    const container = document.getElementById("container");
-    container.style.width = canvasW + 'px';
-    //塗りに黒を設定
-    ctx.fillStyle = '#000';
-    //キャンバスを塗りつぶす
-    ctx.fillRect(0, 0, canvasW, canvasH);
+// // テトリスボードの作成
+// function createTetrisBoard(board) {
+//     //ボードサイズ
+//     const blockSize = 30;
+//     const boardRow = 20;
+//     const boardCol = 10;
+//     //キャンバスの取得
+//     const cvs = document.getElementById("cvs");
+//     const ctx=cvs.getContext("2d");
+//     //2dコンテキストを取得
+//     //キャンバスサイズ
+//     const canvasW = blockSize * boardCol;
+//     const canvasH = blockSize * boardRow;
+//     cvs.width = canvasW;
+//     cvs.height = canvasH;
+//     //コンテナの設定
+//     const container = document.getElementById("container");
+//     container.style.width = canvasW + 'px';
+//     //塗りに黒を設定
+//     ctx.fillStyle = '#000';
+//     //キャンバスを塗りつぶす
+//     ctx.fillRect(0, 0, canvasW, canvasH);
+// }
 
-}
-
-const board = [];
 // //初期化処理
 const init=()=>{
     new Tetris();
@@ -43,6 +41,16 @@ class Tetris {
         this.boardCol = 10;
         this.blockSize = 30;
 
+        // テトリスブロックのサイズ
+        this.tetSize = 4; // テトリスブロックの一辺の大きさ
+        // テトリスブロックを描画
+        this.tet = [
+            [0, 0, 0, 0],
+            [0, 1, 0, 0],
+            [1, 1, 1, 0],
+            [0, 0, 0, 0],
+        ]
+
         //位置を調整するためのオフセット
         this.offsetX = 0;
         this.offsetY = 0;
@@ -51,10 +59,10 @@ class Tetris {
 
         this.board = [];
         // 初期化処理
-        this.createBoard(board);
+        this.createBoard(this.board);
         this.updateScore();
         // this.createTetrisBlock();
-        // this.move();
+        this.move();
     }
 
     // ボードの作成
@@ -79,8 +87,7 @@ class Tetris {
                 this.board[y][x] = 0;
             }
         }
-        console.log(this.board);
-        this.board[3][5] = 1;
+        this.board[3][5] = 1; //テスト用
         this.draw();
     }
 
@@ -91,33 +98,30 @@ class Tetris {
         scoreElement.textContent = `Score: ${this.score}`;
     }
 
-    // テトリスブロックを制生成
-    createTetrisBlock() {
-        createTetrisBoard();
-        //塗りに赤を設定
-        this.ctx.fillStyle="#f00";
-        // テトブロック一つ分
-        //tetの1辺の大きさ
-        const tetSize=4;
-        //T型のtet
-        let tet= [
-            [0, 0, 0, 0],
-            [0, 1, 0, 0],
-            [1, 1, 1, 0],
-            [0, 0, 0, 0],
-        ];
+    // // テトリスブロックを制生成
+    // createTetrisBlock() {
+    //     // テトブロック一つ分
+    //     //T型のtet
+    //     let tet= [
+    //         [0, 0, 0, 0],
+    //         [0, 1, 0, 0],
+    //         [1, 1, 1, 0],
+    //         [0, 0, 0, 0],
+    //     ];
 
-        // ブロックの描画
-        for(let y = 0; y < tetSize; y++) {
-            for(let x = 0; x < tetSize; x++) {
-                if(tet[y][x]) {
-                    let px = this.offsetX + x;
-                    let py = this.offsetY + y;
-                    this.ctx.fillRect(px * this.blockSize, py * this.blockSize, this.blockSize, this.blockSize);
-                }
-            }
-        }
-    }
+    //     // ブロックの描画
+    //     for(let y = 0; y < this.tetSize; y++) {
+    //         for(let x = 0; x < this.tetSize; x++) {
+    //             if(tet[y][x]) {
+    //                 let px = this.offsetX + x;
+    //                 let py = this.offsetY + y;
+    //                 this.board[py][px] = 1;
+    //             }
+    //         }
+    //     }
+
+    //     this.draw();
+    // }
 
     //
     draw() {
@@ -130,6 +134,14 @@ class Tetris {
             for (let x = 0; x < this.boardCol; x++) {
                 if (this.board[y][x]) {
                     this.drawBlock(x,y);
+                }
+            }
+        }
+
+        for (let y = 0; y < this.tetSize; y++) {
+            for (let x = 0; x < this.tetSize; x++) {
+                if (this.tet[y][x]) {
+                    this.drawBlock(this.offsetX + x, this.offsetY + y);
                 }
             }
         }
@@ -150,24 +162,67 @@ class Tetris {
     // ボタンを押した時の処理
     move() {
         document.addEventListener('keydown', (e) => {
-            console.log(e.key);
             switch(e.key) {
                 case 'ArrowRight':
-                    this.offsetX++;
-                    // console.log('right', this.offsetX);
+                    if(this.canMoveCheck(this.tet, 1, 0)) this.offsetX++;
                     break;
                 case 'ArrowLeft':
-                    this.offsetX--;
+                    if(this.canMoveCheck(this.tet, -1, 0)) this.offsetX--;
                     break;
                 case 'ArrowDown':
-                    this.offsetY++;
+                    if(this.canMoveCheck(this.tet, 0, 1)) this.offsetY++;
                     break;
                 case 'ArrowUp':
-                    this.offsetY--;
+                    if(this.canMoveCheck(this.tet, 0, -1)) this.offsetY--;
+                    break;
+                // スペースキーで回転
+                case ' ':
+                    console.log(this.tet);
+                    let newTet = this.createRotateTet(this.tet);
+                    if(this.canMoveCheck(newTet, 0, 0)) {
+                        this.tet = newTet;
+                    }
                     break;
             }
-            this.createTetrisBlock();
+            this.draw();
         });
+    }
+
+    // 指定された方向に移動できるかを判断する(x, yは移動量)
+    canMoveCheck(tet, dx, dy) {
+        for (let y = 0; y < this.tetSize; y++) {
+            for (let x = 0; x < this.tetSize; x++) {
+                // 4×4の中にブロックが存在しているかを判断する
+                if (tet[y][x]) {
+                    let nx = this.offsetX + x + dx;
+                    let ny = this.offsetY + y + dy;
+                    // ボードの範囲外か判断する
+                    if(nx < 0 || nx >= this.boardCol || ny >= this.boardRow || ny < 0) {
+                        console.log('false');
+                        return false;
+                    }
+                    // ボードの上に存在する場合は移動不可
+                    if (this.board[ny][nx]) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    // 回転
+    createRotateTet(tet) {
+        //新しいtetを作る
+        let newTet = [];
+        for (let y = 0; y < this.tetSize; y++) {
+            newTet[y] = [];
+            for (let x = 0; x < this.tetSize; x++) {
+            //時計回りに90度回転させる
+            newTet[y][x] = tet[this.tetSize - 1 - x][y];
+            }
+        }
+        return newTet;
     }
 
 }
