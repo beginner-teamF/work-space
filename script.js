@@ -2,6 +2,66 @@
 const init=()=>{
     new Tetris();
 }
+class TetrisBlock {
+    constructor() {
+        this.num = Math.floor(Math.random() * 7);
+        this.block = this.createBlock();
+    }
+
+    createBlock() {
+        const tetTypes = [
+            [], //最初の要素を空としておく
+            [
+              [0, 0, 0, 0],
+              [0, 1, 1, 0],
+              [0, 1, 1, 0],
+              [0, 0, 0, 0],
+            ],
+            [
+              [0, 0, 0, 0],
+              [0, 1, 0, 0],
+              [1, 1, 1, 0],
+              [0, 0, 0, 0],
+            ],
+            [
+              [0, 0, 0, 0],
+              [1, 1, 0, 0],
+              [0, 1, 1, 0],
+              [0, 0, 0, 0],
+            ],
+            [
+              [0, 0, 0, 0],
+              [0, 0, 1, 1],
+              [0, 1, 1, 0],
+              [0, 0, 0, 0],
+            ],
+            [
+              [0, 0, 0, 0],
+              [1, 1, 1, 1],
+              [0, 0, 0, 0],
+              [0, 0, 0, 0],
+            ],
+            [
+              [0, 0, 0, 0],
+              [1, 1, 1, 0],
+              [0, 0, 1, 0],
+              [0, 0, 0, 0],
+            ],
+            [
+              [0, 0, 0, 0],
+              [0, 0, 1, 0],
+              [1, 1, 1, 0],
+              [0, 0, 0, 0],
+            ],
+          ];
+        //ランダムにテトリスブロックを生成
+        const tetType = tetTypes[this.num];
+        return tetType;
+    }
+    createColor() {
+
+    }
+}
 
 // テトリスクラスの作成
 class Tetris {
@@ -13,19 +73,15 @@ class Tetris {
         // ボードサイズとブロックサイズを指定する
         this.boardRow = 20;
         this.boardCol = 10;
-        this.blockSize = 30;
-        this.speed = 300; // ブロックが落ちるスピード
+        this.blockSize = 30; //ブロックの一辺の大きさ
+        this.speed = 500; // ブロックが落ちるスピード
         this.timerId = NaN; // タイマーのID
 
         // テトリスブロックのサイズ
         this.tetSize = 4; // テトリスブロックの一辺の大きさ
-        // テトリスブロックを描画
-        this.tet = [
-            [0, 0, 0, 0],
-            [0, 1, 0, 0],
-            [1, 1, 1, 0],
-            [0, 0, 0, 0],
-        ]
+
+        // テトリスブロックを描画。本来はランダム生成する。
+        this.tet = new TetrisBlock().block;
 
         //位置を調整するためのオフセット
         this.offsetX = 0;
@@ -35,14 +91,14 @@ class Tetris {
 
         this.board = [];
         // 初期化処理
-        this.createBoard(this.board);
-        this.updateScore();
-        this.move();
-        this.timerId = setInterval(this.dropTet.bind(this), this.speed);
+        this.createBoard(this.board); //真っ黒なボードを作成.draw関数も動く
+        this.updateScore(); //3/5時点では未実装
+        this.move(); //ボタンを押した時の処理
+        this.timerId = setInterval(this.dropTet.bind(this), this.speed); //bindしてテトリスインスタンスを渡す
     }
 
     // ボードの作成
-    createBoard(board) {
+    createBoard() {
         //キャンバスサイズ
         const canvasW = this.blockSize * this.boardCol;
         const canvasH = this.blockSize * this.boardRow;
@@ -83,13 +139,13 @@ class Tetris {
         scoreElement.textContent = `Score: ${this.score}`;
     }
 
-    //
+    //drawメソッドで最新の状態を描画する
     draw() {
         // 真っ黒にする
         this.ctx.fillStyle = '#000';
         this.ctx.fillRect(0, 0, this.cvs.width, this.cvs.height);
 
-        // ボードに存在しているブロック（一になっている）を塗る
+        // ボードに存在しているブロック（1になっている）を塗る
         for (let y = 0; y < this.boardRow; y++) {
             for (let x = 0; x < this.boardCol; x++) {
                 if (this.board[y][x]) {
@@ -98,6 +154,7 @@ class Tetris {
             }
         }
 
+        // テストテトリスブロックを描画
         for (let y = 0; y < this.tetSize; y++) {
             for (let x = 0; x < this.tetSize; x++) {
                 if (this.tet[y][x]) {
@@ -131,11 +188,8 @@ class Tetris {
                 case 'ArrowDown':
                     if(this.canMoveCheck(this.tet, 0, 1)) this.offsetY++;
                     break;
+                // ↑キーで回転
                 case 'ArrowUp':
-                    if(this.canMoveCheck(this.tet, 0, -1)) this.offsetY--;
-                    break;
-                // スペースキーで回転
-                case ' ':
                     console.log(this.tet);
                     let newTet = this.createRotateTet(this.tet);
                     if(this.canMoveCheck(newTet, 0, 0)) {
@@ -147,10 +201,16 @@ class Tetris {
         });
     }
 
+    // 自動で落ちる関数
     dropTet() {
         if(this.canMoveCheck(this.tet, 0, 1)) {
             this.offsetY++;
         } else {
+            // しおんさんの担当範囲
+                // 落下後ボードを書き込む
+                    // ラインを消すかどうかの処理
+                        // ラインを消したらボードスコアを更新する
+                // 次のテトリスブロックに操作がううつる
         }
         this.draw();
     }
@@ -165,7 +225,6 @@ class Tetris {
                     let ny = this.offsetY + y + dy;
                     // ボードの範囲外か判断する
                     if(nx < 0 || nx >= this.boardCol || ny >= this.boardRow || ny < 0) {
-                        console.log('false');
                         return false;
                     }
                     // ボードの上に存在する場合は移動不可
@@ -191,5 +250,9 @@ class Tetris {
         }
         return newTet;
     }
-
 }
+
+// EIJIさんの担当範囲
+// 終了処理
+// ネクストブロックを表示をする
+// Pauseボタンを押した時の処理
