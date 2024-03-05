@@ -1,7 +1,7 @@
 
 
 // テトリスボードの作成
-function createTetrisBoard() {
+function createTetrisBoard(board) {
     //ボードサイズ
     const blockSize = 30;
     const boardRow = 20;
@@ -22,29 +22,70 @@ function createTetrisBoard() {
     ctx.fillStyle = '#000';
     //キャンバスを塗りつぶす
     ctx.fillRect(0, 0, canvasW, canvasH);
+
 }
 
-
+const board = [];
 // //初期化処理
 const init=()=>{
-    createTetrisBoard();
     new Tetris();
 }
 
 // テトリスクラスの作成
 class Tetris {
     constructor() {
-        const cvs = document.getElementById("cvs");
+        //キャンバスの取得
+        this.cvs = document.getElementById("cvs");
+        this.ctx=cvs.getContext("2d");
+
+        // ボードサイズとブロックサイズを指定する
+        this.boardRow = 20;
+        this.boardCol = 10;
+        this.blockSize = 30;
+
+        //位置を調整するためのオフセット
         this.offsetX = 0;
         this.offsetY = 0;
-        this.ctx = cvs.getContext("2d");
-        this.blockSize = 30;
+
         this.score = 0; //スコアボードに表示するスコア
+
+        this.board = [];
+        // 初期化処理
+        this.createBoard(board);
         this.updateScore();
-        this.createTetrisBlock();
-        this.move();
+        // this.createTetrisBlock();
+        // this.move();
     }
 
+    // ボードの作成
+    createBoard(board) {
+        //キャンバスサイズ
+        const canvasW = this.blockSize * this.boardCol;
+        const canvasH = this.blockSize * this.boardRow;
+        this.cvs.width = canvasW;
+        this.cvs.height = canvasH;
+
+        //コンテナの設定
+        const container = document.getElementById("container");
+        container.style.width = canvasW + 'px';
+
+        //塗りに黒を設定
+        // this.ctx.fillStyle = '#000';
+
+        //キャンバスを全てゼロにする
+        for (let y = 0; y < this.boardRow; y++) {
+            this.board[y] = [];
+            for (let x = 0; x < this.boardCol; x++) {
+                this.board[y][x] = 0;
+            }
+        }
+        console.log(this.board);
+        this.board[3][5] = 1;
+        this.draw();
+    }
+
+
+    // スコアの更新
     updateScore() {
         const scoreElement = document.getElementById("score");
         scoreElement.textContent = `Score: ${this.score}`;
@@ -78,8 +119,36 @@ class Tetris {
         }
     }
 
+    //
+    draw() {
+        // 真っ黒にする
+        this.ctx.fillStyle = '#000';
+        this.ctx.fillRect(0, 0, this.cvs.width, this.cvs.height);
+
+        // ボードに存在しているブロック（一になっている）を塗る
+        for (let y = 0; y < this.boardRow; y++) {
+            for (let x = 0; x < this.boardCol; x++) {
+                if (this.board[y][x]) {
+                    this.drawBlock(x,y);
+                }
+            }
+        }
+    }
+
+    // ブロック一つを表示する関数
+    drawBlock(x, y) {
+        // ブロックの色を指定
+        this.ctx.fillStyle = '#f00';
+        let px = x * this.blockSize;
+        let py = y * this.blockSize;
+        this.ctx.fillRect(px, py, this.blockSize, this.blockSize);
+        this.ctx.strokeStyle = '#fff';
+        this.ctx.strokeRect(px, py, this.blockSize, this.blockSize);
+    };
+
+
+    // ボタンを押した時の処理
     move() {
-        // ボタンを押した時の処理
         document.addEventListener('keydown', (e) => {
             console.log(e.key);
             switch(e.key) {
