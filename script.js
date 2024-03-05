@@ -50,7 +50,6 @@ class Tetris {
         scoreElement.textContent = `Score: ${this.score}`;
     }
 
-    c
     // テトリスブロックを制生成
     createTetrisBlock() {
         createTetrisBoard();
