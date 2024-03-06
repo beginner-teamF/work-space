@@ -13,51 +13,50 @@ class TetrisBlock {
     createBlock() {
         // テトリスのブロックの形状を配列で定義
         const tetTypes = [
-            [], //最初の要素を空としておく
             // 各ブロックの形状を2次元配列で定義
             [
-              [0, 0, 0, 0],
-              [0, 1, 1, 0],
-              [0, 1, 1, 0],
-              [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 1, 1, 0],
+            [0, 1, 1, 0],
+            [0, 0, 0, 0],
             ],
             [
-              [0, 0, 0, 0],
-              [0, 1, 0, 0],
-              [1, 1, 1, 0],
-              [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 1, 0, 0],
+            [1, 1, 1, 0],
+            [0, 0, 0, 0],
             ],
             [
-              [0, 0, 0, 0],
-              [1, 1, 0, 0],
-              [0, 1, 1, 0],
-              [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [1, 1, 0, 0],
+            [0, 1, 1, 0],
+            [0, 0, 0, 0],
             ],
             [
-              [0, 0, 0, 0],
-              [0, 0, 1, 1],
-              [0, 1, 1, 0],
-              [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 1, 1],
+            [0, 1, 1, 0],
+            [0, 0, 0, 0],
             ],
             [
-              [0, 0, 0, 0],
-              [1, 1, 1, 1],
-              [0, 0, 0, 0],
-              [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [1, 1, 1, 1],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
             ],
             [
-              [0, 0, 0, 0],
-              [1, 1, 1, 0],
-              [0, 0, 1, 0],
-              [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [1, 1, 1, 0],
+            [0, 0, 1, 0],
+            [0, 0, 0, 0],
             ],
             [
-              [0, 0, 0, 0],
-              [0, 0, 1, 0],
-              [1, 1, 1, 0],
-              [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 1, 0],
+            [1, 1, 1, 0],
+            [0, 0, 0, 0],
             ],
-          ];
+        ];
         //ランダムにテトリスブロックを生成
         const tetType = tetTypes[this.num];
         return tetType;
@@ -122,18 +121,17 @@ class Tetris {
             }
         }
 
-        // テトリスブロックの初期位置
-        const initStartPos = () => {
-            this.offsetX = this.boardCol / 2 - this.tetSize / 2
-            this.offsetY = 0
-        }
-
-        initStartPos();
+        this.initStartPos();
         // this.timerId = setInterval(this.dropTet, this.speed);
 
         this.draw();
     }
 
+    // テトリスブロックの初期位置
+    initStartPos = () => {
+        this.offsetX = this.boardCol / 2 - this.tetSize / 2
+        this.offsetY = 0
+    }
 
     // スコアの更新
     updateScore() {
@@ -157,6 +155,14 @@ class Tetris {
         }
 
         // テストテトリスブロックを描画
+        for (let y = 0; y < this.tetSize; y++) {
+            for (let x = 0; x < this.tetSize; x++) {
+                if (this.tet[y][x]) {
+                    this.drawBlock(this.offsetX + x, this.offsetY + y);
+                }
+            }
+        }
+    }
 
     drawBlock(x, y) {
         // ブロックの色を指定
@@ -198,11 +204,16 @@ class Tetris {
     dropTet() {
         if(this.canMoveCheck(this.tet, 0, 1)) {
             this.offsetY++;
-        } else {  
+        } else {
             this.fixTet();// 落下後、動きが止まったtetをボードを書き込む処理の呼び出し
+            this.clearLine();// ラインを消すかどうかの処理
+            this.tet = new TetrisBlock().block;//次のテトリスブロックに操作がうつる
+            this.initStartPos();//初期位置に戻す
         }
+        this.draw();
     }
-   // 落下後、動きが止まったtetをボードを書き込 
+
+    // 落下後、動きが止まったtetをボードを書き込 
     fixTet() {
         for (let y = 0; y < this.tetSize; y++) {
             for (let x = 0; x < this.tetSize; x++) {
@@ -213,66 +224,29 @@ class Tetris {
             }
         }
     }        //繰り返し行われる落下処理
-        const dropTet = () => {
-            //下に行けたら
-        if (canMove(0, 1)) {
-            //下に行く
-                offsetY++;
-            } else {
-            //行けなかったら固定する
-            fixTet();
-            //初期位置に戻す
-            initStartPos();
-            }
-            draw(); 
-        };            
-        }
-        this.draw(); // ボードを再描画
-        }
-        // ラインを消すかどうかの処理
-        clearLine() {
-            for (let y = 0; y < this.boardRow; y++) {
-                let isLineOK = true;
-                for (let x = 0; x < this.boardCol; x++) {
-                    if (this.board[y][x] === 0) {
-                        isLineOK = false;
-                        break;
-                    }
+    clearLine() {
+        for (let y = 0; y < this.boardRow; y++) {
+            let isLineOK = true;
+            for (let x = 0; x < this.boardCol; x++) {
+                if (this.board[y][x] === 0) {
+                    isLineOK = false;
+                    break;
                 }
-                if (isLineOK) {
-                    for (let ny = y; ny > 0; ny--) {
-                        for (let nx = 0; nx < this.boardCol; nx++) {
-                            this.board[ny][nx] = this.board[ny - 1][nx];
-                        }
-                    }
-                    // 最上行をクリア
+            }
+            if (isLineOK) {
+                for (let ny = y; ny > 0; ny--) {
                     for (let nx = 0; nx < this.boardCol; nx++) {
-                        this.board[0][nx] = 0;
+                        this.board[ny][nx] = this.board[ny - 1][nx];
                     }
                 }
+                // 最上行をクリア
+                for (let nx = 0; nx < this.boardCol; nx++) {
+                    this.board[0][nx] = 0;
+                }
             }
-        }    //繰り返し行われる落下処理
-        const dropTet = () => {
-        //下に行けたら
-        if (canMove(0, 1)) {
-        //下に行く
-        offsetY++;
-        } else {
-        //行けなかったら固定する
-        fixTet();
-        //揃ったラインがあったら消す
-        clearLine();
-        //初期位置に戻す
-        initStartPos();
         }
-        draw();
-        };                        
+    }
         
-        // ラインを消したらボードスコアを更新する
-            // 次のテトリスブロックに操作がうつる
-)
-
-
     // 指定された方向に移動できるかを判断する(x, yは移動量)
     canMoveCheck(tet, dx, dy) {
         for (let y = 0; y < this.tetSize; y++) {
@@ -308,7 +282,7 @@ class Tetris {
         }
         return newTet;
     }
-
+}
 // EIJIさんの担当範囲
 // 終了処理
 // ネクストブロックを表示をする
