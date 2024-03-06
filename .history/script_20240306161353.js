@@ -230,28 +230,31 @@ class Tetris {
         this.draw(); // ボードを再描画
         }
         // ラインを消すかどうかの処理
-        clearLine() {
-            for (let y = 0; y < this.boardRow; y++) {
-                let isLineOK = true;
-                for (let x = 0; x < this.boardCol; x++) {
-                    if (this.board[y][x] === 0) {
-                        isLineOK = false;
-                        break;
-                    }
-                }
-                if (isLineOK) {
-                    for (let ny = y; ny > 0; ny--) {
-                        for (let nx = 0; nx < this.boardCol; nx++) {
-                            this.board[ny][nx] = this.board[ny - 1][nx];
-                        }
-                    }
-                    // 最上行をクリア
-                    for (let nx = 0; nx < this.boardCol; nx++) {
-                        this.board[0][nx] = 0;
-                    }
-                }
+        const clearLine = () => {
+        //ボードの行を上から調査
+        for (let y = 0; y < boardRow; y++) {
+        //一列揃ってると仮定する(フラグ)
+        let isLineOK = true;
+        //列に0が入っていないか調査
+        for (let x = 0; x < boardCol; x++) {
+        if (board[y][x]===0) {
+            //0が入ってたのでフラグをfalse
+            isLineOK = false;
+            break;
+        }
+        }
+        if (isLineOK) {//ここに来るということはその列が揃っていたことを意味する
+        //その行から上に向かってfor文を動かす
+        for (let ny = y; ny > 0; ny--) {
+            for (let nx = 0; nx < boardCol; nx++) {
+            //一列上の情報をコピーする
+            board[ny][nx] = board[ny - 1][nx];
             }
-        }    //繰り返し行われる落下処理
+        }
+        }
+        }
+        };
+        //繰り返し行われる落下処理
         const dropTet = () => {
         //下に行けたら
         if (canMove(0, 1)) {
@@ -268,9 +271,30 @@ class Tetris {
         draw();
         };                        
         
-        // ラインを消したらボードスコアを更新する
-            // 次のテトリスブロックに操作がうつる
-)
+        // ）ラインを消したらボードスコアを更新す（未着手る
+            // （未着手手次のテトリスブロックに操作がうつる
+
+    // 指定された方向に移動できるかを判断する(x, yは移動量)
+    canMoveCheck(tet, dx, dy) {
+        for (let y = 0; y < this.tetSize; y++) {
+            for (let x = 0; x < this.tetSize; x++) {
+                // 4×4の中にブロックが存在しているかを判断する
+                if (tet[y][x]) {
+                    let nx = this.offsetX + x + dx;
+                    let ny = this.offsetY + y + dy;
+                    // ボードの範囲外か判断する
+                    if(nx < 0 || nx >= this.boardCol || ny >= this.boardRow || ny < 0) {
+                        return false;
+                    }
+                    // ボードの上に存在する場合は移動不可
+                    if (this.board[ny][nx]) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
 
 
     // 指定された方向に移動できるかを判断する(x, yは移動量)

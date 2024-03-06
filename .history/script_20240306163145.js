@@ -251,7 +251,7 @@ class Tetris {
                     }
                 }
             }
-        }    //繰り返し行われる落下処理
+        }t    //繰り返し行われる落下処理
         const dropTet = () => {
         //下に行けたら
         if (canMove(0, 1)) {

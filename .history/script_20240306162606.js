@@ -230,28 +230,31 @@ class Tetris {
         this.draw(); // ボードを再描画
         }
         // ラインを消すかどうかの処理
-        clearLine() {
-            for (let y = 0; y < this.boardRow; y++) {
-                let isLineOK = true;
-                for (let x = 0; x < this.boardCol; x++) {
-                    if (this.board[y][x] === 0) {
-                        isLineOK = false;
-                        break;
-                    }
-                }
-                if (isLineOK) {
-                    for (let ny = y; ny > 0; ny--) {
-                        for (let nx = 0; nx < this.boardCol; nx++) {
-                            this.board[ny][nx] = this.board[ny - 1][nx];
-                        }
-                    }
-                    // 最上行をクリア
-                    for (let nx = 0; nx < this.boardCol; nx++) {
-                        this.board[0][nx] = 0;
-                    }
-                }
+        const clearLine = () => {
+        //ボードの行を上から調査
+        for (let y = 0; y < boardRow; y++) {
+        //一列揃ってると仮定する(フラグ)
+        let isLineOK = true;
+        //列に0が入っていないか調査
+        for (let x = 0; x < boardCol; x++) {
+        if (board[y][x]===0) {
+            //0が入ってたのでフラグをfalse
+            isLineOK = false;
+            break;
+        }
+        }
+        if (isLineOK) {//ここに来るということはその列が揃っていたことを意味する
+        //その行から上に向かってfor文を動かす
+        for (let ny = y; ny > 0; ny--) {
+            for (let nx = 0; nx < boardCol; nx++) {
+            //一列上の情報をコピーする
+            board[ny][nx] = board[ny - 1][nx];
             }
-        }    //繰り返し行われる落下処理
+        }
+        }
+        }
+        };
+        //繰り返し行われる落下処理
         const dropTet = () => {
         //下に行けたら
         if (canMove(0, 1)) {
