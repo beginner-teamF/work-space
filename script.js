@@ -2,6 +2,12 @@
 const init=()=>{
     new Tetris();
 }
+
+const button = document.getElementById("restart-button");
+button.addEventListener("click", () => {
+   location.reload();
+});
+
 // テトリスブロッククラス
 class TetrisBlock {
     constructor() {
@@ -70,6 +76,12 @@ class TetrisBlock {
 // テトリスクラスの作成
 class Tetris {
     constructor() {
+        // showクラスを削除
+        const gameOver = document.getElementById("game-over");
+        if(gameOver.classList.contains("show")) {
+            gameOver.classList.remove("show");
+        }
+
         //キャンバスの取得
         this.cvs = document.getElementById("cvs");
         this.ctx=cvs.getContext("2d");
@@ -92,6 +104,7 @@ class Tetris {
         this.offsetY = 0;
 
         this.score = 0; //スコアボードに表示するスコア
+        this.isGameOver = false;
 
         this.board = [];
         // 初期化処理
@@ -141,6 +154,17 @@ class Tetris {
 
     //drawメソッドで最新の状態を描画する
     draw() {
+        if(this.isGameOver) {
+            const gameOver = document.getElementById("game-over");
+            console.log(gameOver);
+            // showクラスを追加
+            gameOver.classList.add("show");
+            clearInterval(this.timerId);
+            // スコアを反映
+            const scoreElement = document.getElementById("game-over-score");
+            scoreElement.textContent = `${this.score}`;
+            return;
+        }
         // 真っ黒にする
         this.ctx.fillStyle = '#000';
         this.ctx.fillRect(0, 0, this.cvs.width, this.cvs.height);
@@ -176,6 +200,7 @@ class Tetris {
 
     // ボタンを押した時の処理
     move() {
+        if(this.isGameOver) return;
         document.addEventListener('keydown', (e) => {
             switch(e.key) {
                 case 'ArrowRight':
@@ -202,6 +227,7 @@ class Tetris {
 
     // 自動で落ちる関数
     dropTet() {
+        if(this.isGameOver) return;
         if(this.canMoveCheck(this.tet, 0, 1)) {
             this.offsetY++;
         } else {
@@ -209,11 +235,17 @@ class Tetris {
             this.clearLine();// ラインを消すかどうかの処理
             this.tet = new TetrisBlock().block;//次のテトリスブロックに操作がうつる
             this.initStartPos();//初期位置に戻す
+
+            // ゲームオーバー判定
+            if (!this.canMoveCheck(this.tet, 0, 0)) {
+                this.isGameOver = true;
+                clearInterval(this.timerId);
+              }
         }
         this.draw();
     }
 
-    // 落下後、動きが止まったtetをボードを書き込 
+    // 落下後、動きが止まったtetをボードを書き込
     fixTet() {
         for (let y = 0; y < this.tetSize; y++) {
             for (let x = 0; x < this.tetSize; x++) {
@@ -246,7 +278,7 @@ class Tetris {
             }
         }
     }
-        
+
     // 指定された方向に移動できるかを判断する(x, yは移動量)
     canMoveCheck(tet, dx, dy) {
         for (let y = 0; y < this.tetSize; y++) {
