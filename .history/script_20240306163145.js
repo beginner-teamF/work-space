@@ -2,93 +2,75 @@
 const init=()=>{
     new Tetris();
 }
-
-const button = document.getElementById("restart-button");
-button.addEventListener("click", () => {
-    location.reload();
-});
-
 // テトリスブロッククラス
 class TetrisBlock {
     constructor() {
-        this.num = Math.floor(Math.random() * 7)+1;
+        this.num = Math.floor(Math.random() * 7);
         this.block = this.createBlock();
-        this.tetColors = [
-            '',
-            '#f6fe85',
-            '#07e0e7',
-            '#7ced77',
-            '#f78ff0',
-            '#f94246',
-            '#9693fe',
-            '#f2b907',
-        ];
     }
 
     // ブロックを生成するメソッド
     createBlock() {
         // テトリスのブロックの形状を配列で定義
         const tetTypes = [
+            [], //最初の要素を空としておく
             // 各ブロックの形状を2次元配列で定義
-            [],
             [
-            [0, 0, 0, 0],
-            [0, 1, 1, 0],
-            [0, 1, 1, 0],
-            [0, 0, 0, 0],
+              [0, 0, 0, 0],
+              [0, 1, 1, 0],
+              [0, 1, 1, 0],
+              [0, 0, 0, 0],
             ],
             [
-            [0, 0, 0, 0],
-            [0, 1, 0, 0],
-            [1, 1, 1, 0],
-            [0, 0, 0, 0],
+              [0, 0, 0, 0],
+              [0, 1, 0, 0],
+              [1, 1, 1, 0],
+              [0, 0, 0, 0],
             ],
             [
-            [0, 0, 0, 0],
-            [1, 1, 0, 0],
-            [0, 1, 1, 0],
-            [0, 0, 0, 0],
+              [0, 0, 0, 0],
+              [1, 1, 0, 0],
+              [0, 1, 1, 0],
+              [0, 0, 0, 0],
             ],
             [
-            [0, 0, 0, 0],
-            [0, 0, 1, 1],
-            [0, 1, 1, 0],
-            [0, 0, 0, 0],
+              [0, 0, 0, 0],
+              [0, 0, 1, 1],
+              [0, 1, 1, 0],
+              [0, 0, 0, 0],
             ],
             [
-            [0, 0, 0, 0],
-            [1, 1, 1, 1],
-            [0, 0, 0, 0],
-            [0, 0, 0, 0],
+              [0, 0, 0, 0],
+              [1, 1, 1, 1],
+              [0, 0, 0, 0],
+              [0, 0, 0, 0],
             ],
             [
-            [0, 0, 0, 0],
-            [1, 1, 1, 0],
-            [0, 0, 1, 0],
-            [0, 0, 0, 0],
+              [0, 0, 0, 0],
+              [1, 1, 1, 0],
+              [0, 0, 1, 0],
+              [0, 0, 0, 0],
             ],
             [
-            [0, 0, 0, 0],
-            [0, 0, 1, 0],
-            [1, 1, 1, 0],
-            [0, 0, 0, 0],
+              [0, 0, 0, 0],
+              [0, 0, 1, 0],
+              [1, 1, 1, 0],
+              [0, 0, 0, 0],
             ],
-        ];
+          ];
         //ランダムにテトリスブロックを生成
         const tetType = tetTypes[this.num];
         return tetType;
+    }
+    // ブロックの色を生成するメソッド（未実装）
+    createColor() {
+
     }
 }
 
 // テトリスクラスの作成
 class Tetris {
     constructor() {
-        // showクラスを削除
-        const gameOver = document.getElementById("game-over");
-        if(gameOver.classList.contains("show")) {
-            gameOver.classList.remove("show");
-        }
-
         //キャンバスの取得
         this.cvs = document.getElementById("cvs");
         this.ctx=cvs.getContext("2d");
@@ -104,16 +86,13 @@ class Tetris {
         this.tetSize = 4; // テトリスブロックの一辺の大きさ
 
         // テトリスブロックを描画。本来はランダム生成する。
-        this.tetris = new TetrisBlock();
         this.tet = new TetrisBlock().block;
-        this.tet_idx = this.tetris.num;
 
         //位置を調整するためのオフセット
         this.offsetX = 0;
         this.offsetY = 0;
 
         this.score = 0; //スコアボードに表示するスコア
-        this.isGameOver = false;
 
         this.board = [];
         // 初期化処理
@@ -143,17 +122,18 @@ class Tetris {
             }
         }
 
-        this.initStartPos();
+        // テトリスブロックの初期位置
+        const initStartPos = () => {
+            this.offsetX = this.boardCol / 2 - this.tetSize / 2
+            this.offsetY = 0
+        }
+
+        initStartPos();
         // this.timerId = setInterval(this.dropTet, this.speed);
 
         this.draw();
     }
 
-    // テトリスブロックの初期位置
-    initStartPos = () => {
-        this.offsetX = this.boardCol / 2 - this.tetSize / 2
-        this.offsetY = 0
-    }
 
     // スコアの更新
     updateScore() {
@@ -163,17 +143,6 @@ class Tetris {
 
     //drawメソッドで最新の状態を描画する
     draw() {
-        if(this.isGameOver) {
-            const gameOver = document.getElementById("game-over");
-            console.log(gameOver);
-            // showクラスを追加
-            gameOver.classList.add("show");
-            clearInterval(this.timerId);
-            // スコアを反映
-            const scoreElement = document.getElementById("game-over-score");
-            scoreElement.textContent = `${this.score}`;
-            return;
-        }
         // 真っ黒にする
         this.ctx.fillStyle = '#000';
         this.ctx.fillRect(0, 0, this.cvs.width, this.cvs.height);
@@ -182,24 +151,16 @@ class Tetris {
         for (let y = 0; y < this.boardRow; y++) {
             for (let x = 0; x < this.boardCol; x++) {
                 if (this.board[y][x]) {
-                    this.drawBlock(x,y,this.board[y][x]);
+                    this.drawBlock(x,y);
                 }
             }
         }
 
         // テストテトリスブロックを描画
-        for (let y = 0; y < this.tetSize; y++) {
-            for (let x = 0; x < this.tetSize; x++) {
-                if (this.tet[y][x]) {
-                    this.drawBlock(this.offsetX + x, this.offsetY + y, this.tet_idx);
-                }
-            }
-        }
-    }
 
-    drawBlock(x, y, tet_idx) {
+    drawBlock(x, y) {
         // ブロックの色を指定
-        this.ctx.fillStyle = this.tetris.tetColors[tet_idx];
+        this.ctx.fillStyle = '#f00';
         let px = x * this.blockSize;
         let py = y * this.blockSize;
         this.ctx.fillRect(px, py, this.blockSize, this.blockSize);
@@ -209,7 +170,6 @@ class Tetris {
 
     // ボタンを押した時の処理
     move() {
-        if(this.isGameOver) return;
         document.addEventListener('keydown', (e) => {
             switch(e.key) {
                 case 'ArrowRight':
@@ -236,59 +196,82 @@ class Tetris {
 
     // 自動で落ちる関数
     dropTet() {
-        if(this.isGameOver) return;
         if(this.canMoveCheck(this.tet, 0, 1)) {
             this.offsetY++;
-        } else {
+        } else {  
             this.fixTet();// 落下後、動きが止まったtetをボードを書き込む処理の呼び出し
-            this.clearLine();// ラインを消すかどうかの処理
-            this.tetris = new TetrisBlock();//次のテトリスブロックを生成
-            this.tet = this.tetris.block;//次のテトリスブロックに操作がうつる
-            this.tet_idx = this.tetris.num;
-            this.initStartPos();//初期位置に戻す
-
-            // ゲームオーバー判定
-            if (!this.canMoveCheck(this.tet, 0, 0)) {
-                this.isGameOver = true;
-                clearInterval(this.timerId);
-            }
         }
-        this.draw();
     }
-
-    // 落下後、動きが止まったtetをボードを書き込
+   // 落下後、動きが止まったtetをボードを書き込 
     fixTet() {
         for (let y = 0; y < this.tetSize; y++) {
             for (let x = 0; x < this.tetSize; x++) {
                 if (this.tet[y][x]) {
                     // ボードに書き込む
-                    this.board[this.offsetY + y][this.offsetX + x] = this.tet_idx;
+                    this.board[this.offsetY + y][this.offsetX + x] = 1;
                 }
             }
         }
     }        //繰り返し行われる落下処理
-    clearLine() {
-        for (let y = 0; y < this.boardRow; y++) {
-            let isLineOK = true;
-            for (let x = 0; x < this.boardCol; x++) {
-                if (this.board[y][x] === 0) {
-                    isLineOK = false;
-                    break;
-                }
+        const dropTet = () => {
+            //下に行けたら
+        if (canMove(0, 1)) {
+            //下に行く
+                offsetY++;
+            } else {
+            //行けなかったら固定する
+            fixTet();
+            //初期位置に戻す
+            initStartPos();
             }
-            if (isLineOK) {
-                for (let ny = y; ny > 0; ny--) {
-                    for (let nx = 0; nx < this.boardCol; nx++) {
-                        this.board[ny][nx] = this.board[ny - 1][nx];
+            draw(); 
+        };            
+        }
+        this.draw(); // ボードを再描画
+        }
+        // ラインを消すかどうかの処理
+        clearLine() {
+            for (let y = 0; y < this.boardRow; y++) {
+                let isLineOK = true;
+                for (let x = 0; x < this.boardCol; x++) {
+                    if (this.board[y][x] === 0) {
+                        isLineOK = false;
+                        break;
                     }
                 }
-                // 最上行をクリア
-                for (let nx = 0; nx < this.boardCol; nx++) {
-                    this.board[0][nx] = 0;
+                if (isLineOK) {
+                    for (let ny = y; ny > 0; ny--) {
+                        for (let nx = 0; nx < this.boardCol; nx++) {
+                            this.board[ny][nx] = this.board[ny - 1][nx];
+                        }
+                    }
+                    // 最上行をクリア
+                    for (let nx = 0; nx < this.boardCol; nx++) {
+                        this.board[0][nx] = 0;
+                    }
                 }
             }
+        }t    //繰り返し行われる落下処理
+        const dropTet = () => {
+        //下に行けたら
+        if (canMove(0, 1)) {
+        //下に行く
+        offsetY++;
+        } else {
+        //行けなかったら固定する
+        fixTet();
+        //揃ったラインがあったら消す
+        clearLine();
+        //初期位置に戻す
+        initStartPos();
         }
-    }
+        draw();
+        };                        
+        
+        // ラインを消したらボードスコアを更新する
+            // 次のテトリスブロックに操作がうつる
+)
+
 
     // 指定された方向に移動できるかを判断する(x, yは移動量)
     canMoveCheck(tet, dx, dy) {
@@ -325,7 +308,7 @@ class Tetris {
         }
         return newTet;
     }
-}
+
 // EIJIさんの担当範囲
 // 終了処理
 // ネクストブロックを表示をする

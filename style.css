@@ -24,3 +24,37 @@ body {
     background-color: #000;
     margin-left: 20px;
 }
+
+#game-over {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,.9);
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 4rem;
+    flex-direction: column;
+}
+
+#game-over button {
+    font-size: 2rem;
+    background-color: white;
+    border: 1px solid black;
+    padding: .25em .5em;
+    cursor: pointer;
+    margin-top: 1em;
+}
+
+#game-over button:hover {
+    background-color: black;
+    color: white;
+    border-color: white;
+}
+
+#game-over.show {
+    display: flex;
+}
