@@ -13,16 +13,22 @@ body {
     margin: 0;
 }
 
+.game-area {
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
+    margin: 0 auto;
+}
+
 #container {
     display: flex;
     margin: 0 auto;
 }
 
-#nextBlock {
-    width: 150px;
-    height: 150px;
-    background-color: #000;
-    margin-left: 20px;
+#nextContainer {
+    flex: 1;
+    margin-left: 10px;
+    height:10px
 }
 
 #game-over {
