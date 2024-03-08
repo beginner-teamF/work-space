@@ -105,7 +105,7 @@ class Tetris {
 
         // テトリスブロックを描画。本来はランダム生成する。
         this.tetris = new TetrisBlock();
-        this.tet = new TetrisBlock().block;
+        this.tet = this.tetris.block;
         this.tet_idx = this.tetris.num;
 
         //位置を調整するためのオフセット
