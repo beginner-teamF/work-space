@@ -1,3 +1,8 @@
+*, *::after, *:before {
+    box-sizing: border-box;
+}
+
+
 body {
     margin: 0;
 }
@@ -16,13 +21,16 @@ body {
 #container {
     display: flex;
     margin: 0 auto;
+    align-items: center;
+    width: 100vw;
+    height: 70vh;
 }
 
 #nextBlock {
-    width: 150px;
-    height: 150px;
+    width: 80px;
+    height: 80px;
     background-color: #000;
-    margin-left: 20px;
+    margin-left: 50px;
 }
 
 #game-over {
