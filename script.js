@@ -104,7 +104,7 @@ class Tetris {
         // ボードサイズとブロックサイズを指定する
         this.boardRow = 20;
         this.boardCol = 10;
-        this.blockSize = 30; //ブロックの一辺の大きさ
+        this.blockSize = 20; //ブロックの一辺の大きさ
         this.speed = 500; // ブロックが落ちるスピード
         this.timerId = NaN; // タイマーのID
 
