@@ -1,6 +1,11 @@
 //初期化処理
 const init=()=>{
-    new Tetris();
+    tetris = new Tetris();
+
+    const startStopButton = document.getElementById("start-button");
+    startStopButton.addEventListener("click", () => {
+        tetris.togglePause();
+    });
 }
 
 const button = document.getElementById("restart-button");
@@ -130,6 +135,8 @@ class Tetris {
         this.updateScore(); //3/5時点では未実装
         this.move(); //ボタンを押した時の処理
         this.timerId = setInterval(this.dropTet.bind(this), this.speed); //bindしてテトリスインスタンスを渡す
+
+        this.isPaused = false;
     }
 
     // ボードの作成
@@ -368,8 +375,13 @@ class Tetris {
         }
         return newTet;
     }
+
+    togglePause() {
+        this.isPaused = !this.isPaused;
+        if (this.isPaused) {
+            clearInterval(this.timerId); // ゲームを一時停止
+        } else {
+            this.timerId = setInterval(this.dropTet.bind(this), this.speed); // ゲームを再開
+        }
+    }
 }
-// EIJIさんの担当範囲
-// 終了処理
-// ネクストブロックを表示をする
-// Pauseボタンを押した時の処理
