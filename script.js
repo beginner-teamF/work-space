@@ -147,15 +147,16 @@ class Tetris {
         this.cvs.width = canvasW;
         this.cvs.height = canvasH;
 
-        this.cvsNextBlock.with = canvasH;
-        this.cvsNextBlock.height = canvasW;
+        this.cvsNextBlock.width = 80;
+        this.cvsNextBlock.height= 80;
 
         //コンテナの設定
         const container = document.getElementById("container");
         container.style.width = canvasW + 'px';
 
-        const nextBlock = document.getElementById("nextBlock");
-        nextBlock.style.width = canvasW + 'px';
+        const nextBlock = document.getElementById("nextContainer");
+        nextBlock.style.width = 80 + 'px';
+        nextBlock.style.height = 80 + 'px';
 
         //キャンバスを全てゼロにする
         for (let y = 0; y < this.boardRow; y++) {
